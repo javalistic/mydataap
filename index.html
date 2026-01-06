@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Cool Data App</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', sans-serif; 
+      background-color: #f0f8ff; 
+      padding: 40px; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    form { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+      width: 300px; 
+    }
+
+    h1 { 
+      text-align: center; 
+      color: #333; 
+    }
+
+    label { 
+      display: block; 
+      margin-top: 10px; 
+      font-weight: bold; 
+    }
+
+    input { 
+      width: 100%; 
+      padding: 8px; 
+      margin-top: 5px; 
+      box-sizing: border-box; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+    }
+
+    button { 
+      width: 100%; 
+      margin-top: 20px; 
+      background-color: #28a745; 
+      color: white; 
+      padding: 10px; 
+      border: none; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      font-size: 16px; 
+      transition: 0.3s; 
+    }
+
+    button:hover { 
+      background-color: #218838; 
+    }
+
+    #status { 
+      text-align: center; 
+      margin-top: 15px; 
+      font-weight: bold; 
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <h1>📝 Enter Details</h1>
+    <form id="demoForm">
+      <label>Name:</label> 
+      <input type="text" id="name" required placeholder="John Doe">
+      
+      <label>Age:</label> 
+      <input type="number" id="age" required placeholder="25">
+      
+      <label>Gender:</label> 
+      <input type="text" id="gender" placeholder="Male/Female/Other">
+      
+      <label>Country:</label> 
+      <input type="text" id="country" placeholder="Nigeria">
+      
+      <button type="submit" id="saveBtn">Save to Database</button>
+    </form>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    document.getElementById("demoForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const statusBox = document.getElementById("status");
+      const btn = document.getElementById("saveBtn");
+
+      statusBox.innerText = "⏳ Saving...";
+      statusBox.style.color = "orange";
+      btn.disabled = true;
+      btn.style.backgroundColor = "#ccc";
+
+      const data = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        gender: document.getElementById("gender").value,
+        country: document.getElementById("country").value
+      };
+
+      try {
+        const response = await fetch("http://localhost:3000/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          statusBox.innerText = "✅ Saved Successfully!";
+          statusBox.style.color = "green";
+          document.getElementById("demoForm").reset();
+        } else {
+          throw new Error("Server said no");
+        }
+
+      } catch (error) {
+        statusBox.innerText = "❌ Error: Check if Server is running.";
+        statusBox.style.color = "red";
+      }
+
+      btn.disabled = false;
+      btn.style.backgroundColor = "#28a745";
+    });
+  </script>
+
+</body>
+</html>
